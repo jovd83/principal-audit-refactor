@@ -1,0 +1,3 @@
+display_name: Principal Audit & Refactor
+short_description: Audit a local repository, write a severity-ranked engineering report, and execute an approval-gated refactor plan.
+default_prompt: Audit this project, write a timestamped technical review in Technical_Reviews, pause for approval, then refactor only after I approve.
