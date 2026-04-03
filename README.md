@@ -1,5 +1,10 @@
 # Principal Audit & Refactor
 
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/jovd83/principal-audit-refactor/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/jovd83)
+
+
 `principal-audit-refactor` is an Agent Skill for auditing a local codebase, producing an evidence-backed engineering review, and executing an approval-gated refactor plan.
 
 It is designed for AI coding agents that need a disciplined way to upgrade prototype-quality repositories into safer, cleaner, more maintainable systems without skipping discovery, over-editing, or mixing audit and mutation into one uncontrolled pass.

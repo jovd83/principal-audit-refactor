@@ -4,6 +4,12 @@ All notable changes to `principal-audit-refactor` are documented here.
 
 The format follows Keep a Changelog and uses semantic versioning where practical for a skill repository.
 
+## [1.2.0] 2026-04-03
+
+### Added
+- "Gotchas" section to `SKILL.md` to highlight common friction points like monorepo roots, context window limits, and state drift.
+- Version, License, and "Buy Me a Coffee" badges to `README.md`.
+
 ## [1.1.0] 2026-03-19
 
 ### Added

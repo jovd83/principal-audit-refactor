@@ -3,7 +3,7 @@ name: principal-audit-refactor
 description: Audit a local software project, produce a severity-ranked engineering review, and execute an approval-gated refactor plan. Use when Codex needs to assess prototype-quality or inconsistent codebases, run stack-aware checks, write timestamped audit artifacts, and then implement production-grade improvements with explicit safety boundaries, report contracts, and refactoring discipline.
 metadata:
   author: jovd83
-  version: "1.0.0"
+  version: "1.2.0"
 ---
 
 # Principal Audit & Refactor
@@ -103,6 +103,15 @@ If the workflow becomes unreliable, degrade gracefully:
 - Large or tangled files: split work into bounded extractions before deeper cleanup.
 - Unsafe ambiguity about intent or target path: pause and confirm before editing.
 - Conflicts with user changes: stop and ask before overwriting.
+
+## Gotchas
+
+Watch out for these common friction points:
+- **Root Ambiguity**: In monorepos, the skill might default to the root. Always clarify if the audit should be scoped to a specific package or directory.
+- **Context Window Limits**: For very large repositories or files, the agent may not see the full context in a single pass. Consider splitting large audits into subsystems.
+- **Generated Artifacts**: Ensure you are auditing source code and not generated files (e.g., `dist/`, `build/`, `node_modules/`).
+- **Tooling Hallucination**: If native test/lint scripts are missing, strictly report the gap rather than inventing commands to simulate a "deterministic" check.
+- **State Drift**: If the user makes manual edits after an audit but before a refactor, the audit results may become stale. Briefly re-verify critical files before mutating.
 
 ## Resource Map
 - Rubric: [references/rubric.md](references/rubric.md)
