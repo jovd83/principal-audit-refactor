@@ -4,6 +4,14 @@ All notable changes to `principal-audit-refactor` are documented here.
 
 The format follows Keep a Changelog and uses semantic versioning where practical for a skill repository.
 
+## [1.2.1] 2026-04-04
+
+### Added
+- Dedicated `Validate Skills` GitHub Actions workflow and matching status badge in `README.md`.
+
+### Fixed
+- Removed the stale `CONTRIBUTING.md` reference from the repository layout in `README.md`.
+
 ## [1.2.0] 2026-04-03
 
 ### Added

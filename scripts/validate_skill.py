@@ -32,15 +32,37 @@ def parse_frontmatter(text: str) -> dict[str, str]:
     if not match:
         fail('SKILL.md is missing YAML frontmatter delimited by ---')
 
-    data: dict[str, str] = {}
+    data: dict[str, object] = {}
+    current_section: str | None = None
     for raw_line in match.group(1).splitlines():
-        line = raw_line.strip()
-        if not line:
+        if not raw_line.strip():
             continue
+        if raw_line.startswith('  '):
+            if current_section is None:
+                fail(f'Unexpected indented frontmatter line: {raw_line!r}')
+            line = raw_line.strip()
+            if ':' not in line:
+                fail(f'Invalid frontmatter line: {raw_line!r}')
+            key, value = line.split(':', 1)
+            section = data.setdefault(current_section, {})
+            if not isinstance(section, dict):
+                fail(f'Frontmatter section {current_section!r} must be a mapping')
+            section[key.strip()] = value.strip()
+            continue
+
+        line = raw_line.strip()
         if ':' not in line:
             fail(f'Invalid frontmatter line: {raw_line!r}')
         key, value = line.split(':', 1)
-        data[key.strip()] = value.strip()
+        key = key.strip()
+        value = value.strip()
+        if value:
+            data[key] = value
+            current_section = None
+            continue
+
+        data[key] = {}
+        current_section = key
     return data
 
 
@@ -66,12 +88,18 @@ def validate_required_files() -> None:
 def validate_skill_frontmatter() -> None:
     skill_text = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
     frontmatter = parse_frontmatter(skill_text)
-    allowed_keys = {'name', 'description'}
+    allowed_keys = {'name', 'description', 'metadata'}
     if set(frontmatter) != allowed_keys:
         fail(f'SKILL.md frontmatter keys must be exactly {sorted(allowed_keys)}; found {sorted(frontmatter)}')
-    for key in allowed_keys:
+    for key in ('name', 'description'):
         if not frontmatter[key]:
             fail(f'SKILL.md frontmatter key {key!r} must not be empty')
+    metadata = frontmatter['metadata']
+    if not isinstance(metadata, dict):
+        fail("SKILL.md frontmatter key 'metadata' must be a mapping")
+    for key in ('author', 'version'):
+        if key not in metadata or not metadata[key]:
+            fail(f"SKILL.md frontmatter metadata field {key!r} must not be empty")
 
 
 def validate_openai_metadata() -> None:

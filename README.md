@@ -1,5 +1,6 @@
 # Principal Audit & Refactor
 
+[![Validate Skills](https://github.com/jovd83/principal-audit-refactor/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/jovd83/principal-audit-refactor/actions/workflows/validate-skills.yml)
 [![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/jovd83/principal-audit-refactor/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/jovd83)
@@ -60,14 +61,13 @@ Clone or copy this folder into a local skills directory supported by your agent 
 SKILL.md
 README.md
 CHANGELOG.md
-CONTRIBUTING.md
 SECURITY.md
 LICENSE
 .github/
   ISSUE_TEMPLATE/
   pull_request_template.md
   workflows/
-    ci.yml
+    validate-skills.yml
 agents/
   openai.yaml
 assets/
@@ -125,6 +125,8 @@ Repository-level validation:
 ```bash
 python scripts/validate_skill.py
 ```
+
+GitHub Actions runs the same validator through the `Validate Skills` workflow on pushes, pull requests, and manual dispatch.
 
 Forward-test evidence:
 - `examples/forward-tests/sandbox-audit-example.md`: audit-only proof that the skill can evaluate the sandbox and stop correctly at the approval gate.
