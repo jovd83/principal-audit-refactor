@@ -1,6 +1,6 @@
 # Principal Audit & Refactor
 
-[![Validate Skills](https://github.com/jovd83/principal-audit-refactor/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/jovd83/principal-audit-refactor/actions/workflows/validate-skills.yml)
+[![Validate Skills](https://github.com/jovd83/principal-audit-refactor/actions/workflows/ci.yml/badge.svg)](https://github.com/jovd83/principal-audit-refactor/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/jovd83/principal-audit-refactor/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
