@@ -4,8 +4,15 @@ description: Audit a local software project, produce a severity-ranked engineeri
 metadata:
   author: jovd83
   version: "1.2.0"
+  dispatcher-output-artifacts: audit_report, refactor_plan, refactor_summary
+  dispatcher-risk: high
+  dispatcher-writes-files: true
+  dispatcher-input-artifacts: repository_context, audit_scope, codebase_metrics, approval_state
+  dispatcher-capabilities: code-audit, refactor-planning, approval-gated-refactor
+  dispatcher-stack-tags: analysis, refactor, engineering-review
+  dispatcher-accepted-intents: audit_codebase, plan_refactor, execute_approved_refactor
+  dispatcher-category: analysis
 ---
-
 # Principal Audit & Refactor
 
 Use this skill to turn an unstable or inconsistent repository into a better-structured, safer, more maintainable codebase without collapsing discovery, audit, and mutation into one uncontrolled pass.
