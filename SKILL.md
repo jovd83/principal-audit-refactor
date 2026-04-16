@@ -2,8 +2,10 @@
 name: principal-audit-refactor
 description: Audit a local software project, produce a severity-ranked engineering review, and execute an approval-gated refactor plan. Use when Codex needs to assess prototype-quality or inconsistent codebases, run stack-aware checks, write timestamped audit artifacts, and then implement production-grade improvements with explicit safety boundaries, report contracts, and refactoring discipline.
 metadata:
+    dispatcher-layer: execution
+    dispatcher-lifecycle: active
   author: jovd83
-  version: "1.2.0"
+  version: "1.3.0"
   dispatcher-output-artifacts: audit_report, refactor_plan, refactor_summary
   dispatcher-risk: high
   dispatcher-writes-files: true
@@ -16,6 +18,12 @@ metadata:
 # Principal Audit & Refactor
 
 Use this skill to turn an unstable or inconsistent repository into a better-structured, safer, more maintainable codebase without collapsing discovery, audit, and mutation into one uncontrolled pass.
+
+
+## Telemetry & Logging
+> [!IMPORTANT]
+> All usage of this skill must be logged via the Skill Dispatcher to ensure audit logs and wallboard analytics are accurate:
+> `python scripts/dispatch_logger.py --skill <skill_name> --intent <intent> --reason <reason>`
 
 ## Operating Model
 
