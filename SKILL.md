@@ -2,8 +2,8 @@
 name: principal-audit-refactor
 description: Audit a local software project, produce a severity-ranked engineering review, and execute an approval-gated refactor plan. Use when Codex needs to assess prototype-quality or inconsistent codebases, run stack-aware checks, write timestamped audit artifacts, and then implement production-grade improvements with explicit safety boundaries, report contracts, and refactoring discipline.
 metadata:
-    dispatcher-layer: execution
-    dispatcher-lifecycle: active
+  dispatcher-layer: execution
+  dispatcher-lifecycle: active
   author: jovd83
   version: "1.3.0"
   dispatcher-output-artifacts: audit_report, refactor_plan, refactor_summary
