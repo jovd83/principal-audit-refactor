@@ -4,6 +4,11 @@ All notable changes to `principal-audit-refactor` are documented here.
 
 The format follows Keep a Changelog and uses semantic versioning where practical for a skill repository.
 
+## [1.3.1] - 2026-04-30
+
+### Changed
+- Trim `SKILL.md` frontmatter to fit the 1000-character dispatcher limit (description trim, migrate non-dispatcher fields to body).
+
 ## [1.2.1] 2026-04-04
 
 ### Added

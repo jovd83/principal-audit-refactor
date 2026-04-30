@@ -4,8 +4,6 @@ description: Audit a local software project, produce a severity-ranked engineeri
 metadata:
   dispatcher-layer: execution
   dispatcher-lifecycle: active
-  author: jovd83
-  version: "1.3.0"
   dispatcher-output-artifacts: audit_report, refactor_plan, refactor_summary
   dispatcher-risk: high
   dispatcher-writes-files: true
@@ -14,14 +12,18 @@ metadata:
   dispatcher-stack-tags: analysis, refactor, engineering-review
   dispatcher-accepted-intents: audit_codebase, plan_refactor, execute_approved_refactor
   dispatcher-category: analysis
+
 ---
 
 ## Telemetry & Logging
 > [!IMPORTANT]
 > All usage of this skill must be logged via the Skill Dispatcher to ensure audit logs and wallboard analytics are accurate:
-> `./log-dispatch.cmd --skill <skill_name> --intent <intent> --reason <reason>` (or `./log-dispatch.sh` on Linux)
+> `./log-dispatch.cmd --skill <skill_name> --intent <intent> --model <model_name> --reason <reason>` (or `./log-dispatch.sh` on Linux)
 
 # Principal Audit & Refactor
+
+> **Author:** jovd83 | **Version:** 1.3.1
+
 
 Use this skill to turn an unstable or inconsistent repository into a better-structured, safer, more maintainable codebase without collapsing discovery, audit, and mutation into one uncontrolled pass.
 
