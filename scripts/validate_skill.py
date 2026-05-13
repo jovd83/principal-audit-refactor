@@ -94,12 +94,28 @@ def validate_skill_frontmatter() -> None:
     for key in ('name', 'description'):
         if not frontmatter[key]:
             fail(f'SKILL.md frontmatter key {key!r} must not be empty')
-    metadata = frontmatter['metadata']
+    # Check mandatory metadata: author and version
+    # They can be in frontmatter['metadata'] or in the Markdown body
+    metadata = frontmatter.get('metadata', {})
     if not isinstance(metadata, dict):
         fail("SKILL.md frontmatter key 'metadata' must be a mapping")
+
     for key in ('author', 'version'):
-        if key not in metadata or not metadata[key]:
-            fail(f"SKILL.md frontmatter metadata field {key!r} must not be empty")
+        value = metadata.get(key)
+        if not value:
+            # Fallback to body search
+            if key == 'author':
+                match = re.search(r'\*\*Author:\*\*\s*([^\s|]+)', skill_text)
+            else: # version
+                match = re.search(r'\*\*Version:\*\*\s*([0-9.]+)', skill_text)
+            
+            if match:
+                value = match.group(1)
+            
+        if not value:
+            fail(f"SKILL.md missing {key!r} (check frontmatter 'metadata:{key}' or body '**{key.capitalize()}:**')")
+        else:
+            print(f'INFO: SKILL.md {key}: {value}')
 
 
 def validate_openai_metadata() -> None:
