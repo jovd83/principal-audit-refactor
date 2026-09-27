@@ -88,9 +88,11 @@ def validate_required_files() -> None:
 def validate_skill_frontmatter() -> None:
     skill_text = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
     frontmatter = parse_frontmatter(skill_text)
-    allowed_keys = {'name', 'description', 'metadata'}
-    if set(frontmatter) != allowed_keys:
-        fail(f'SKILL.md frontmatter keys must be exactly {sorted(allowed_keys)}; found {sorted(frontmatter)}')
+    required_keys = {'name', 'description', 'metadata'}
+    optional_keys = {'license', 'disable-model-invocation', 'context', 'agent', 'allowed-tools'}
+    if not required_keys <= set(frontmatter) or set(frontmatter) - required_keys - optional_keys:
+        fail(f'SKILL.md frontmatter needs {sorted(required_keys)} and may add {sorted(optional_keys)}; '
+             f'found {sorted(frontmatter)}')
     for key in ('name', 'description'):
         if not frontmatter[key]:
             fail(f'SKILL.md frontmatter key {key!r} must not be empty')

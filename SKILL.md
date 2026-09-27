@@ -1,9 +1,10 @@
 ---
 name: principal-audit-refactor
 description: Audit a local software project, produce a severity-ranked engineering review, and execute an approval-gated refactor plan. Use when Codex needs to assess prototype-quality or inconsistent codebases, run stack-aware checks, write timestamped audit artifacts, and then implement production-grade improvements with explicit safety boundaries, report contracts, and refactoring discipline.
+disable-model-invocation: true
 metadata:
   author: jovd83
-  version: 1.3.0
+  version: 1.4.0
   dispatcher-layer: execution
   dispatcher-lifecycle: active
   dispatcher-output-artifacts: audit_report, refactor_plan, refactor_summary
@@ -18,7 +19,7 @@ metadata:
 
 # Principal Audit & Refactor
 
-> **Author:** jovd83 | **Version:** 1.3.0  
+> **Author:** jovd83 | **Version:** 1.4.0  
 
 Use this skill to turn an unstable or inconsistent repository into a better-structured, safer, more maintainable codebase without collapsing discovery, audit, and mutation into one uncontrolled pass.
 
@@ -97,6 +98,23 @@ Must include:
 - resolved findings,
 - follow-up work intentionally left out of scope,
 - validation performed after edits.
+
+## Chain Phases
+
+`config/chain_definition.json` is the executable contract: 10 phases, run by `skill-orchestrator/scripts/next_phase.py`. In Claude Code, run the whole chain with the **`principal-audit-refactor`** agent (`~/.claude/agents/principal-audit-refactor.md`). It stops at each approval gate and returns, and the main conversation resumes it. This SKILL.md stays the reference for the phases and for manual runs in other harnesses.
+
+| # | Phase | Skill | Gate | Workflow step above |
+|---|---|---|---|---|
+| 1 | `scope` | agent-handled |  | 1. Establish Scope |
+| 2 | `repo_context` | `codebase-context` |  | 2. Discover the Environment |
+| 3 | `dependency_review` | `modern-dependency-guard` |  | 3. Produce the Audit |
+| 4 | `security_review` | `defensive-appsec-review-skill` |  | 3. Produce the Audit |
+| 5 | `testability_review` | `stack-aware-unit-testing-skill` |  | 3. Produce the Audit |
+| 6 | `audit_report` | agent-handled | **approval gate after** | 3-4. Audit report; pause for approval |
+| 7 | `approved_refactor` | agent-handled |  | 5. Execute the Refactor |
+| 8 | `validation` | `stack-aware-unit-testing-skill` |  | 5. Execute the Refactor |
+| 9 | `automation_review` | `automated-test-reviewer` |  | 5. Execute the Refactor |
+| 10 | `summary` | agent-handled |  | Output Contracts: refactor report |
 
 ## Memory Model
 
