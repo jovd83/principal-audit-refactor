@@ -1,0 +1,107 @@
+{
+  "_comment": "Chain for principal-audit-refactor. Audit-first workflow: discovery -> specialist reviews -> agent-written audit report -> HARD HITL gate -> approval-gated bounded refactor -> validation -> coverage review -> summary. Promoted 2026-05-17 from chain_proposals draft.",
+  "chain_name": "principal-audit-refactor",
+  "description": "Codebase audit then approval-gated refactor: scope -> codebase-context -> dependency review -> security review -> testability review -> audit report (HITL) -> bounded refactor -> validation -> automation review -> summary",
+  "phases": [
+    {
+      "id": "scope",
+      "name": "Step 1 - Agent establishes audit scope, hot files, and safety state",
+      "skill": null,
+      "intent": "audit_codebase",
+      "reason": "Confirm target path, audit/refactor intent, git safety state, mutation boundaries, and prioritize high-risk areas via 'hot files' (files changed often, files containing core business logic).",
+      "risk": "low",
+      "pass_context_forward": true,
+      "query_suffix": "Act as a Senior Principal Engineer specializing in System Architecture, Security, and Refactoring. Your overall goal across this chain is a ruthless, high-fidelity technical audit to move this codebase from 'vibe-coded' prototype to production-grade engineering.\n\nSTART your phase output with a single 3-line ANNOUNCEMENT block in exactly this format (this is the first thing the human sees from this chain):\n\n  Stack: <primary languages, frameworks, databases — comma-separated, one short line>\n  Plan: <2-sentence prioritized plan of attack referencing the dimensions you intend to focus on>\n  Hot files: <top 5 highest-priority files for the rubric scan, comma-separated, with relative paths>\n\nTHEN, after a blank line, produce the four scope artefacts:\n  (1) Target path + in-scope dirs/files + out-of-scope dirs/files (vendor/, node_modules/, generated/, .git/).\n  (2) Git safety state (clean working tree, current branch).\n  (3) Mutation boundary — what the eventual phase 7 refactor is permitted to touch.\n  (4) HOT FILES detail: run 'git log --pretty=format: --name-only --since=90.days | sort | uniq -c | sort -rg | head -20' to identify files changed most often, and separately list any file >300 LOC or that clearly contains core business logic. The 'Hot files' in the announcement block should be the top 5 from this expanded list. The downstream rubric scan in phase 6 will prioritise these.",
+      "_note": "Agent-handled. Confirms what is in scope, what is off-limits, and which files deserve focus."
+    },
+    {
+      "id": "repo_context",
+      "name": "Step 2 - Codebase discovery",
+      "skill": "codebase-context",
+      "intent": "discover_repo_conventions",
+      "reason": "Discover repository structure, stack, test commands, conventions, entry points, and high-risk areas.",
+      "risk": "low",
+      "pass_context_forward": true
+    },
+    {
+      "id": "dependency_review",
+      "name": "Step 3 - Dependency and stack risk review",
+      "skill": "modern-dependency-guard",
+      "intent": "review_dependencies",
+      "reason": "Review dependency and stack risk when manifests or lockfiles are in scope.",
+      "risk": "low",
+      "pass_context_forward": true,
+      "query_suffix": "If no dependency manifest is in scope, state exactly: 'dependency review: not applicable' and stop. The host driver should mark this phase --skipped."
+    },
+    {
+      "id": "security_review",
+      "name": "Step 4 - Application security review",
+      "skill": "defensive-appsec-review-skill",
+      "intent": "review_application_security",
+      "reason": "Review security-sensitive code paths, auth, input handling, secrets, and data exposure risks.",
+      "risk": "high",
+      "pass_context_forward": true,
+      "query_suffix": "If no security-relevant surface is in scope, state exactly: 'security review: not applicable' and stop. Use static review only; do not exploit live systems. The host driver should mark this phase --skipped if not applicable."
+    },
+    {
+      "id": "testability_review",
+      "name": "Step 5 - Testability and coverage assessment",
+      "skill": "stack-aware-unit-testing-skill",
+      "intent": "review_unit_test_coverage",
+      "reason": "Assess native test coverage and recommend the lightest useful validation strategy for the later refactor.",
+      "risk": "medium",
+      "pass_context_forward": true
+    },
+    {
+      "id": "audit_report",
+      "name": "Step 6 - Refactoring Roadmap report and approval gate",
+      "skill": null,
+      "intent": "plan_refactor",
+      "reason": "Apply the Principal Engineer rubric to the codebase using prior-phase evidence; produce a timestamped 'Refactoring Roadmap' report with a Maintainability Score and a severity-ranked Audit Table; propose a bounded refactor plan; STOP for explicit refactor approval before any code changes.",
+      "risk": "high",
+      "pass_context_forward": true,
+      "on_phase_complete": "hitl",
+      "_hitl_note": "Hard gate. The Refactoring Roadmap is the deliverable of this phase. The human must review the severity ranking and the proposed bounded refactor plan before phase 7 (which actually modifies code) runs. --reject halts the chain with the audit artefact preserved.",
+      "query_suffix": "Act as a Senior Principal Engineer (Architecture, Security, Refactoring). Scan the codebase against the PRINCIPAL ENGINEER RUBRIC, applying it especially to the hot files from phase 1. Use evidence from phases 2-5 wherever it applies; this phase ADDS the architectural / reliability / hygiene scan that the specialist sub-skills did not perform.\n\nPRINCIPAL ENGINEER RUBRIC (12 smells across 4 dimensions):\n\nI. Architectural & Boundary Smells:\n  - Boundary violations (logic that belongs in the data layer existing in the UI/client layer; raw DB queries in components).\n  - Leaky abstractions (low-level implementation details — manual string parsing, raw SQL, direct fetch — bleeding into high-level orchestration).\n  - God objects/components (any file/class >300 lines mixing business logic, state, and presentation).\n\nII. Data, Security & Type Safety:\n  - Validation gaps (missing/inconsistent input validation at trust boundaries / API entry points). Cross-reference phase 4 if it ran.\n  - Type-safety erosion (use of escape hatches: any, interface{}, dynamic, as any — to bypass the compiler).\n  - Performance bottlenecks (N+1 query patterns — DB calls inside loops; heavy unnecessary dependencies).\n\nIII. Reliability & Observability:\n  - The 'silent failure' trap (empty catch blocks, suppressed errors, generic 'Error occurred' messages with no structured logging).\n  - Ghost state (UI state out of sync with the source of truth — DB / URL / global store).\n  - Untestable logic (functions tightly coupled to globals, time, or external APIs that cannot be mocked).\n\nIV. Code Hygiene & Sustainability:\n  - Magic values (hardcoded strings — roles, paths, config — instead of enums or config files).\n  - Side-effect soup (functions lacking single responsibility — e.g. a function that validates, saves, emails, and clears cache).\n  - Package bloat (large libraries used for tasks that native language features handle).\n\nDELIVERABLE — produce a markdown report titled exactly 'Refactoring Roadmap: <DetectedProjectName>' (use the project name discovered in phase 2). Structure:\n\n1. EXECUTIVE SUMMARY: a Maintainability Score from 0-100 (where 100 = production-grade; subtract aggressively for critical smells) plus a 2-sentence 'State of the Union'.\n\n2. AUDIT TABLE with these exact columns:\n   | Location | Severity | Smell Detected | The Risk | The Fix |\n   | :--- | :--- | :--- | :--- | :--- |\n   | path/to/file:line | Critical/High/Med/Low | <Name of Smell> | <Why this kills the project> | <Actionable instruction> |\n\n3. BOUNDED REFACTOR PLAN: a numbered list of the specific roadmap items proposed for execution in phase 7. For each item: file(s) + change + why in scope. End with an explicit OUT-OF-SCOPE section listing items the audit found but does NOT propose to fix in this pass.\n\nPERSISTENCE — also save this markdown report to '<repo-root>/Technical_Reviews/Audit_<YYYY-MM-DD>_<HH-mm>.md'. Create the Technical_Reviews/ folder if it does not exist. Use the current local timestamp. Confirm the saved path in your phase output so it can be cited by phase 10.\n\nTHEN STOP. Do not begin the refactor in this phase. The chain will pause for HITL approval before phase 7 runs."
+    },
+    {
+      "id": "approved_refactor",
+      "name": "Step 7 - Execute approved bounded refactor (batch by file)",
+      "skill": null,
+      "intent": "execute_approved_refactor",
+      "reason": "After explicit approval, implement only the approved bounded refactor while preserving user changes and scope boundaries. Group all fixes for a given file into one edit; output the COMPLETE final file content per touched file (not diffs).",
+      "risk": "high",
+      "pass_context_forward": true,
+      "query_suffix": "Act as a Senior Principal Engineer who implements, not advises. Resolve as many items as possible from the approved Refactoring Roadmap in this single pass.\n\nCATEGORIZE the approved items into:\n  - Critical/Safety: bugs, security risks, race conditions.\n  - Architectural/Structural: pattern implementation, decoupling, file organization.\n  - Clean Code: naming, dead code, typing.\n\nEXECUTION STRATEGY (BATCH BY FILE): do NOT output fixes issue-by-issue. Group all approved fixes that touch a given file into one edit that produces the COMPLETE final file content. Use your Edit / Write tools per file. After each file is edited, verify the file still parses (run the language's syntax check or a fast import for Python / tsc --noEmit for TypeScript / etc.).\n\nREFACTORING RULES:\n  - Apply DRY (don't repeat yourself) and SOLID principles aggressively, but only within the approved scope.\n  - Add comments ONLY where logic is non-obvious. Remove redundant comments.\n  - Apply strict typing where the language supports it (TypeScript strict, Python type hints with mypy/pyright in mind).\n  - Preserve existing user-authored code outside the approved scope. No drive-by improvements. No 'while I'm here' cleanups.\n\nOUTPUT FORMAT for your phase artefact:\n  1. Start with a 'Change Log' summary listing which roadmap items were resolved (cite the audit table row from phase 6 for each).\n  2. Then for each file you modified, a section using the format: '## <relative/path/to/file.ext>' followed by a code fence with the full final file content.\n  3. End with a 'Deferred' section listing any approved items that could NOT be resolved this pass and why (e.g. requires schema migration; needs human input).\n\nSTRICT SCOPE reminder: items in the audit table's OUT-OF-SCOPE section MUST NOT be touched. If you discover something outside scope that you believe should change, add it to the phase 10 summary's residual-risk section instead of touching it now."
+    },
+    {
+      "id": "validation",
+      "name": "Step 8 - Validate refactor with native tests",
+      "skill": "stack-aware-unit-testing-skill",
+      "intent": "run_regression_tests",
+      "reason": "Run or add the lightest useful native validation for changed behavior and summarize results.",
+      "risk": "medium",
+      "pass_context_forward": true
+    },
+    {
+      "id": "automation_review",
+      "name": "Step 9 - Review validation coverage",
+      "skill": "automated-test-reviewer",
+      "intent": "review_automation_quality",
+      "reason": "Review whether the validation evidence covers the refactored risk areas and identify residual gaps.",
+      "risk": "low",
+      "pass_context_forward": true
+    },
+    {
+      "id": "summary",
+      "name": "Step 10 - Refactor summary report",
+      "skill": null,
+      "intent": "deliver_refactor_summary",
+      "reason": "Write the final refactor summary with audit reference, files changed, findings resolved, validation, residual risk, and follow-ups.",
+      "risk": "low",
+      "pass_context_forward": false,
+      "query_suffix": "Produce the final REFACTOR SUMMARY report as the phase artefact. Use the structure below verbatim; ground every claim in evidence from the accumulated context (cite phase numbers).\n\nREQUIRED SECTIONS:\n  1. Audit reference: path to the Technical_Reviews/Audit_<timestamp>.md file written in phase 6.\n  2. Maintainability Score (from phase 6) and a one-sentence assessment of how the executed refactor moved that score.\n  3. Files changed: bulleted list of every file modified in phase 7, with a one-line per-file note.\n  4. Roadmap items resolved: cite each audit-table row from phase 6 that was actually fixed.\n  5. Roadmap items deferred: items in the approved plan that could NOT be resolved this pass + reason.\n  6. Validation result: pass/fail counts from phase 8, with any failed tests called out by name.\n  7. Residual risks: items found during the audit but explicitly OUT-OF-SCOPE per phase 6 — these remain in the codebase as known issues for a future pass.\n  8. Follow-up recommendations: optional, brief.\n\nKeep the report tight (under 2000 words). It is the closing deliverable of the chain.",
+      "_note": "Agent-handled."
+    }
+  ]
+}
