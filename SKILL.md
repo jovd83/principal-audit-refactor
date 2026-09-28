@@ -121,7 +121,7 @@ Must include:
 Use memory deliberately:
 - Runtime memory: current findings, tool output, and the active refactor plan for this run only.
 - Project-local memory: persisted audit and refactor reports written into `Technical_Reviews/` in the target repository.
-- Shared memory: out of scope for this skill. If cross-project reuse is needed, integrate with a separate shared-memory skill instead of storing shared memory here.
+- Shared memory: out of scope for this skill. If cross-project reuse is needed, use the agent's own memory (for example CLAUDE.md or AGENTS.md) instead of storing shared memory here.
 
 Do not automatically promote runtime observations into persistent artifacts unless they are useful to the user or needed for traceability.
 
