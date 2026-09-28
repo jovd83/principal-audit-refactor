@@ -1,6 +1,6 @@
 ---
 name: principal-audit-refactor
-description: Audit a local software project, produce a severity-ranked engineering review, and execute an approval-gated refactor plan. Use when Codex needs to assess prototype-quality or inconsistent codebases, run stack-aware checks, write timestamped audit artifacts, and then implement production-grade improvements with explicit safety boundaries, report contracts, and refactoring discipline.
+description: Audit a local software project, produce a severity-ranked engineering review, and execute an approval-gated refactor plan. Use when the agent needs to assess prototype-quality or inconsistent codebases, run stack-aware checks, write timestamped audit artifacts, and then implement production-grade improvements with explicit safety boundaries, report contracts, and refactoring discipline.
 disable-model-invocation: true
 metadata:
   author: jovd83
