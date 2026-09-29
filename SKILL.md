@@ -4,7 +4,7 @@ description: Audit a local software project, produce a severity-ranked engineeri
 disable-model-invocation: true
 metadata:
   author: jovd83
-  version: 1.4.0
+  version: 1.4.1
   dispatcher-layer: execution
   dispatcher-lifecycle: active
   dispatcher-output-artifacts: audit_report, refactor_plan, refactor_summary
@@ -19,7 +19,7 @@ metadata:
 
 # Principal Audit & Refactor
 
-> **Author:** jovd83 | **Version:** 1.4.0  
+> **Author:** jovd83 | **Version:** 1.4.1  
 
 Use this skill to turn an unstable or inconsistent repository into a better-structured, safer, more maintainable codebase without collapsing discovery, audit, and mutation into one uncontrolled pass.
 

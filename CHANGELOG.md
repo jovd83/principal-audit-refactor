@@ -4,6 +4,11 @@ All notable changes to `principal-audit-refactor` are documented here.
 
 The format follows Keep a Changelog and uses semantic versioning where practical for a skill repository.
 
+## [1.4.1] - 2026-09-29
+
+### Changed
+- The approval gate's note in `config/chain_definition.json` names `--finish`: an audit-only run ends at the gate as a successful early end (skill-orchestrator 1.3.0), while `--reject` stays for a real rejection.
+
 ## [1.4.0] - 2026-09-27
 
 ### Changed
